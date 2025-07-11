@@ -1,0 +1,857 @@
+; CHALLENGING A THALASSOCRACY: Srivijaya           by HockeySam18
+
+;AT THE BEGINNING********************
+
+(defrule
+	(true)
+=>
+	(set-strategic-number sn-maximum-food-drop-distance 0)
+	(set-strategic-number sn-maximum-wood-drop-distance 0)
+	(set-strategic-number sn-maximum-gold-drop-distance 0)
+	(set-strategic-number sn-maximum-stone-drop-distance 0)
+	(set-strategic-number sn-maximum-hunt-drop-distance 0)
+	(set-strategic-number sn-percent-civilian-explorers 0)
+	(set-strategic-number sn-task-ungrouped-soldiers 0)
+	(disable-self)
+)
+ 
+;DODGING PROJECTILES**********************
+
+(defrule
+	(difficulty > moderate)
+=>
+	(set-difficulty-parameter ability-to-maintain-distance 100)
+	(set-difficulty-parameter ability-to-dodge-missiles 100)
+	(set-signal 0)
+)
+
+(defrule
+	(difficulty == moderate)
+=>
+	(set-difficulty-parameter ability-to-maintain-distance 70)
+	(set-difficulty-parameter ability-to-dodge-missiles 70)
+	(set-signal 1)
+)
+
+(defrule
+	(difficulty < moderate)
+=>
+	(set-difficulty-parameter ability-to-maintain-distance 30)
+	(set-difficulty-parameter ability-to-dodge-missiles 30)
+	(set-signal 2)
+)
+
+
+;GO ACTIVE***********************
+
+(defrule
+	(event-detected trigger 1)
+=>
+	(set-strategic-number sn-defense-distance 15)
+	(set-strategic-number sn-sentry-distance 20)
+	(set-strategic-number sn-wall-targeting-mode 1)
+	(disable-self)
+)
+
+;SCOUTING***********************
+
+(defrule
+	(event-detected trigger 1)
+=>
+	(set-strategic-number sn-number-explore-groups 1)
+)
+
+;VILLAGERS***********************
+(defrule
+	(event-detected trigger 1)
+=>
+	(set-strategic-number sn-percent-civilian-explorers 0)
+	(set-strategic-number sn-percent-civilian-builders 0)
+	(set-strategic-number sn-percent-civilian-gatherers 100)
+	(set-strategic-number sn-cap-civilian-explorers 0)
+	(set-strategic-number sn-cap-civilian-gatherers 100)
+	(set-strategic-number sn-food-gatherer-percentage  60)
+	(set-strategic-number sn-gold-gatherer-percentage  10)
+	(set-strategic-number sn-stone-gatherer-percentage 10)
+	(set-strategic-number sn-wood-gatherer-percentage  20)
+	(set-strategic-number sn-maximum-gold-drop-distance 20)
+	(set-strategic-number sn-maximum-stone-drop-distance 20)
+	(set-strategic-number sn-maximum-food-drop-distance 10) 
+	(set-strategic-number sn-maximum-wood-drop-distance 20)
+	(set-strategic-number sn-number-forward-builders 0)  
+	(disable-self)
+)
+
+;FARMING ***********************
+
+(defrule
+	(building-type-count-total farm less-than 6)
+	(idle-farm-count <= 1)
+	(event-detected trigger 1)
+	(can-build farm)
+=>
+	(build farm)
+)
+
+;COMBAT CONTROLS*****************************
+
+(defrule
+	(event-detected trigger 1)
+
+=>
+	(set-strategic-number sn-group-form-distance 50)
+
+	(set-strategic-number sn-maximum-attack-group-size 10)
+	(set-strategic-number sn-minimum-attack-group-size 3)
+	(set-strategic-number sn-percent-attack-soldiers 50)
+
+	(set-strategic-number sn-scale-minimum-attack-group-size 0)
+	(set-strategic-number sn-scale-maximum-attack-group-size 0)
+
+	(set-strategic-number sn-attack-group-size-randomness 0)
+
+	(set-strategic-number sn-percent-enemy-sighted-response 60)
+
+	(set-strategic-number sn-enemy-sighted-response-distance 40)
+
+	(set-strategic-number sn-maximum-boat-attack-group-size 6)
+	(set-strategic-number sn-minimum-boat-attack-group-size 3)
+	(set-strategic-number sn-number-boat-attack-groups 2)
+
+	(set-strategic-number sn-do-not-scale-for-difficulty-level 1)
+	(disable-self)
+
+)
+
+
+
+(defrule
+	(event-detected trigger 1)
+
+	(difficulty < easy)
+=>
+
+	(enable-timer 1 800)
+
+	(disable-self)
+
+)
+
+(defrule
+	(event-detected trigger 1)
+
+	(difficulty == easy)
+=>
+
+	(enable-timer 1 2000)
+
+	(disable-self)
+
+)
+
+
+
+(defrule
+
+	(timer-triggered 1)
+
+	(military-population >= 10)
+
+	(defend-soldier-count >= 10)
+
+	(not (town-under-attack))
+
+=>
+
+	(enable-timer 1 400);Interval
+
+	(attack-now)
+
+)
+
+;MILITARY UNITS**************************
+;***MODERATE*************************
+
+(defrule
+	(unit-type-count-total battle-elephant-line < 5)
+	(can-train battle-elephant-line)
+	(event-detected trigger 1)
+	(difficulty == moderate)
+=>
+	(train battle-elephant-line)
+)
+
+(defrule
+	(unit-type-count-total militiaman-line < 5)
+	(can-train militiaman-line)
+	(event-detected trigger 1)
+	(difficulty == moderate)
+=>
+	(train militiaman-line)
+)
+
+(defrule
+	(unit-type-count-total archer-line < 5)
+	(can-train archer-line)
+	(event-detected trigger 1)
+	(difficulty == moderate)
+=>
+	(train archer-line)
+)
+
+(defrule
+	(unit-type-count-total villager < 10)
+	(can-train villager)
+	(event-detected trigger 1)
+=>
+	(train villager)
+)
+
+(defrule
+	(unit-type-count-total fishing-ship < 5)
+	(can-train fishing-ship)
+	(event-detected trigger 1)
+=>
+	(train fishing-ship)
+)
+
+(defrule
+	(unit-type-count-total transport-ship < 3)
+	(can-train transport-ship)
+	(event-detected trigger 1)
+=>
+	(train transport-ship)
+)
+
+(defrule
+	(warboat-count < 15)
+	(can-train galley-line)
+	(event-detected trigger 1)
+	(difficulty == moderate)
+=>
+	(train galley-line)
+)
+
+(defrule
+	(warboat-count < 15)
+	(can-train fire-ship-line)
+	(event-detected trigger 1)
+	(difficulty == moderate)
+=>
+	(train fire-ship-line)
+)
+
+(defrule
+	(warboat-count < 15)
+	(can-train demolition-ship-line)
+	(event-detected trigger 1)
+	(difficulty == moderate)
+=>
+	(train demolition-ship-line)
+)
+
+(defrule
+	(warboat-count < 15)
+	(can-train cannon-galleon-line)
+	(event-detected trigger 1)
+	(difficulty == moderate)
+=>
+	(train cannon-galleon-line)
+)
+
+(defrule
+	(not (town-under-attack))
+	(unit-type-count-total mangonel-line < 1)
+	(can-train mangonel-line)
+	(event-detected trigger 1)
+	(difficulty == moderate)
+=>
+	(train mangonel-line)
+)
+
+
+;***STANDARD*************
+
+(defrule
+	(unit-type-count-total battle-elephant-line < 3)
+	(can-train battle-elephant-line)
+	(event-detected trigger 1)
+	(difficulty > moderate)
+=>
+	(train battle-elephant-line)
+)
+
+(defrule
+	(unit-type-count-total militiaman-line < 3)
+	(can-train militiaman-line)
+	(event-detected trigger 1)
+	(difficulty > moderate)
+=>
+	(train militiaman-line)
+)
+
+(defrule
+	(unit-type-count-total archer-line < 3)
+	(can-train archer-line)
+	(event-detected trigger 1)
+	(difficulty > moderate)
+=>
+	(train archer-line)
+)
+
+(defrule
+	(warboat-count < 10)
+	(can-train galley-line)
+	(event-detected trigger 1)
+	(difficulty > moderate)
+=>
+	(train galley-line)
+)
+
+(defrule
+	(warboat-count < 10)
+	(can-train fire-ship-line)
+	(event-detected trigger 1)
+	(difficulty > moderate)
+=>
+	(train fire-ship-line)
+)
+
+(defrule
+	(warboat-count < 10)
+	(can-train demolition-ship-line)
+	(event-detected trigger 1)
+	(difficulty > moderate)
+=>
+	(train demolition-ship-line)
+)
+
+;***HARD***************
+
+(defrule
+	(unit-type-count-total battle-elephant-line < 8)
+	(can-train battle-elephant-line)
+	(event-detected trigger 1)
+	(difficulty < moderate)
+=>
+	(train battle-elephant-line)
+)
+
+(defrule
+	(unit-type-count-total militiaman-line < 8)
+	(can-train militiaman-line)
+	(event-detected trigger 1)
+	(difficulty < moderate)
+=>
+	(train militiaman-line)
+)
+
+(defrule
+	(unit-type-count-total archer-line < 8)
+	(can-train archer-line)
+	(event-detected trigger 1)
+	(difficulty < moderate)
+=>
+	(train archer-line)
+)
+
+(defrule
+	(warboat-count < 20)
+	(can-train galley-line)
+	(event-detected trigger 1)
+	(difficulty < moderate)
+=>
+	(train galley-line)
+)
+
+(defrule
+	(warboat-count < 20)
+	(can-train fire-ship-line)
+	(event-detected trigger 1)
+	(difficulty < moderate)
+=>
+	(train fire-ship-line)
+)
+
+(defrule
+	(warboat-count < 20)
+	(can-train demolition-ship-line)
+	(event-detected trigger 1)
+	(difficulty < moderate)
+=>
+	(train demolition-ship-line)
+)
+
+(defrule
+	(warboat-count < 20)
+	(can-train cannon-galleon-line)
+	(event-detected trigger 1)
+	(difficulty < moderate)
+=>
+	(train cannon-galleon-line)
+)
+
+(defrule
+	(not (town-under-attack))
+	(unit-type-count-total mangonel-line < 2)
+	(can-train mangonel-line)
+	(event-detected trigger 1)
+	(difficulty < moderate)
+=>
+	(train mangonel-line)
+)
+
+;UPGRADES****************************
+
+(defrule
+	(or
+		(or
+			(escrow-amount wood > 2000)
+			(escrow-amount food > 2000)
+		)
+		(or
+			(escrow-amount gold > 3000)
+			(escrow-amount stone > 3000)
+		)
+	)
+=>
+	(release-escrow wood)
+	(release-escrow food)
+	(release-escrow gold)
+	(release-escrow stone)
+)
+
+(defrule
+	(true)
+=>
+	(set-escrow-percentage wood 30)
+	(set-escrow-percentage food 30)
+	(set-escrow-percentage gold 30)
+	(set-escrow-percentage stone 30)
+)
+
+;UNIT UPGRADES*******************************
+
+(defrule
+	(difficulty <= moderate)
+	(can-research-with-escrow ri-elite-battle-elephant)
+	(event-detected trigger 1)
+=>
+	(release-escrow wood)
+	(release-escrow food)
+	(release-escrow gold)
+	(release-escrow stone)
+        (research ri-elite-battle-elephant)
+)
+
+(defrule
+	(unit-type-count-total militiaman-line > 2)
+	(can-research-with-escrow ri-two-handed-swordsman)
+	(event-detected trigger 1)
+=>
+	(release-escrow wood)
+	(release-escrow food)
+	(release-escrow gold)
+	(release-escrow stone)
+        (research ri-two-handed-swordsman)
+)
+
+(defrule
+	(unit-type-count-total militiaman-line > 2)
+	(can-research-with-escrow ri-champion)
+	(event-detected trigger 1)
+=>
+	(release-escrow wood)
+	(release-escrow food)
+	(release-escrow gold)
+	(release-escrow stone)
+        (research ri-champion)
+)
+
+(defrule
+	(unit-type-count-total archer-line > 2)
+	(can-research-with-escrow ri-arbalest)
+	(event-detected trigger 1)
+=>
+	(release-escrow wood)
+	(release-escrow food)
+	(release-escrow gold)
+	(release-escrow stone)
+        (research ri-arbalest)
+)
+
+(defrule
+	(can-research-with-escrow ri-onager)
+	(event-detected trigger 1)
+=>
+	(release-escrow wood)
+	(release-escrow food)
+	(release-escrow gold)
+	(release-escrow stone)
+        (research ri-onager)
+)
+
+(defrule
+	(difficulty < moderate)
+	(can-research-with-escrow ri-siege-engineers)
+	(event-detected trigger 1)
+=>
+	(release-escrow wood)
+	(release-escrow food)
+	(release-escrow gold)
+	(release-escrow stone)
+        (research ri-siege-engineers)
+)
+
+(defrule
+	(can-research-with-escrow ri-chemistry)
+	(event-detected trigger 1)
+=>
+	(release-escrow wood)
+	(release-escrow food)
+	(release-escrow gold)
+	(release-escrow stone)
+        (research ri-chemistry)
+)
+
+(defrule
+	(unit-type-count-total galley-line > 2)
+	(can-research-with-escrow ri-galleon)
+	(event-detected trigger 1)
+=>
+	(release-escrow wood)
+	(release-escrow food)
+	(release-escrow gold)
+	(release-escrow stone)
+        (research ri-galleon)
+)
+
+(defrule
+	(unit-type-count-total fire-ship-line > 2)
+	(can-research-with-escrow ri-fast-fire-ship)
+	(event-detected trigger 1)
+=>
+	(release-escrow wood)
+	(release-escrow food)
+	(release-escrow gold)
+	(release-escrow stone)
+        (research ri-fast-fire-ship)
+)
+
+(defrule
+	(unit-type-count-total galley-line > 2)
+	(can-research-with-escrow ri-dry-dock)
+	(event-detected trigger 1)
+=>
+	(release-escrow wood)
+	(release-escrow food)
+	(release-escrow gold)
+	(release-escrow stone)
+        (research ri-dry-dock)
+)
+
+(defrule
+	(difficulty < moderate)
+	(can-research-with-escrow ri-shipwright)
+	(event-detected trigger 1)
+=>
+	(release-escrow wood)
+	(release-escrow food)
+	(release-escrow gold)
+	(release-escrow stone)
+        (research ri-shipwright)
+)
+
+(defrule
+	(can-research-with-escrow ri-cannon-galleon)
+	(event-detected trigger 1)
+=>
+	(release-escrow wood)
+	(release-escrow food)
+	(release-escrow gold)
+	(release-escrow stone)
+        (research ri-cannon-galleon)
+)
+
+(defrule
+	(difficulty < moderate)
+	(can-research-with-escrow ri-deck-guns)
+	(event-detected trigger 1)
+=>
+	(release-escrow wood)
+	(release-escrow food)
+	(release-escrow gold)
+	(release-escrow stone)
+        (research ri-deck-guns)
+)
+
+;BLACKSMITH UPGRADES*****************************
+
+(defrule
+	(can-research-with-escrow ri-blast-furnace)
+	(difficulty < moderate)
+	(event-detected trigger 1)
+=>
+	(release-escrow wood)
+	(release-escrow food)
+	(release-escrow gold)
+	(release-escrow stone)
+	(research ri-blast-furnace)
+)
+
+(defrule
+	(can-research-with-escrow ri-bracer)
+	(difficulty < moderate)
+	(event-detected trigger 1)
+=>
+	(release-escrow wood)
+	(release-escrow food)
+	(release-escrow gold)
+	(release-escrow stone)
+	(research ri-bracer)
+)
+
+(defrule
+	(can-research-with-escrow ri-plate-mail)
+	(difficulty < moderate)
+	(event-detected trigger 1)
+=>
+	(release-escrow wood)
+	(release-escrow food)
+	(release-escrow gold)
+	(release-escrow stone)
+	(research ri-plate-mail)
+)
+
+(defrule
+	(can-research-with-escrow ri-plate-barding)
+	(difficulty < moderate)
+	(event-detected trigger 1)
+=>
+	(release-escrow wood)
+	(release-escrow food)
+	(release-escrow gold)
+	(release-escrow stone)
+	(research ri-plate-barding)
+)
+
+(defrule
+	(can-research-with-escrow ri-ring-archer-armor)
+	(difficulty < moderate)
+	(event-detected trigger 1)
+=>
+	(release-escrow wood)
+	(release-escrow food)
+	(release-escrow gold)
+	(release-escrow stone)
+	(research ri-ring-archer-armor)
+)
+
+(defrule
+	(can-research-with-escrow ri-iron-casting)
+	(difficulty <= moderate)
+	(event-detected trigger 1)
+=>
+	(release-escrow wood)
+	(release-escrow food)
+	(release-escrow gold)
+	(release-escrow stone)
+	(research ri-iron-casting)
+)
+
+(defrule
+	(can-research-with-escrow ri-bodkin-arrow)
+	(difficulty <= moderate)
+	(event-detected trigger 1)
+=>
+	(release-escrow wood)
+	(release-escrow food)
+	(release-escrow gold)
+	(release-escrow stone)
+	(research ri-bodkin-arrow)
+)
+
+(defrule
+	(can-research-with-escrow ri-chain-mail)
+	(difficulty <= moderate)
+	(event-detected trigger 1)
+=>
+	(release-escrow wood)
+	(release-escrow food)
+	(release-escrow gold)
+	(release-escrow stone)
+	(research ri-chain-mail)
+)
+
+(defrule
+	(can-research-with-escrow ri-chain-barding)
+	(difficulty <= moderate)
+	(event-detected trigger 1)
+=>
+	(release-escrow wood)
+	(release-escrow food)
+	(release-escrow gold)
+	(release-escrow stone)
+	(research ri-chain-barding)
+)
+
+(defrule
+	(can-research-with-escrow ri-leather-archer-armor)
+	(difficulty <= moderate)
+	(event-detected trigger 1)
+=>
+	(release-escrow wood)
+	(release-escrow food)
+	(release-escrow gold)
+	(release-escrow stone)
+	(research ri-leather-archer-armor)
+)
+
+;MARKET*******************
+
+(defrule
+	(gold-amount >= 1500)
+	(wood-amount <= 200)
+	(commodity-buying-price wood <= 150)
+	(can-buy-commodity wood)
+=>
+	(buy-commodity wood)
+)
+
+(defrule
+	(gold-amount >= 1500)
+	(food-amount <= 200)
+	(commodity-buying-price food <= 150)
+	(can-buy-commodity food)
+=>
+	(buy-commodity food)
+)
+
+(defrule
+	(gold-amount >= 500)
+	(food-amount <= 100)
+	(can-buy-commodity food)
+=>
+	(buy-commodity food)
+)
+
+(defrule
+	(gold-amount >= 2000)
+	(stone-amount <= 500)
+	(commodity-buying-price stone <= 100)
+	(can-buy-commodity stone)
+=>
+	(buy-commodity stone)
+)
+
+(defrule
+	(gold-amount >= 1500)
+	(stone-amount <= 200)
+	(commodity-buying-price stone <= 200)
+	(can-buy-commodity stone)
+=>
+	(buy-commodity stone)
+)
+
+(defrule
+	(wood-amount >= 2000)
+	(or
+		(gold-amount < 200)
+		(food-amount < 200)
+	)
+	(can-sell-commodity wood)
+=>
+	(sell-commodity wood)
+)
+
+(defrule
+	(food-amount >= 2000)
+	(or
+		(gold-amount < 200)
+		(wood-amount < 200)
+	)
+	(can-sell-commodity food)
+=>
+	(sell-commodity food)
+)
+
+(defrule
+	(stone-amount >= 1500)
+	(or
+		(or
+			(gold-amount < 200)
+			(wood-amount < 200)
+		)
+		(food-amount < 200)
+	)
+	(commodity-selling-price stone >= 70)
+	(can-sell-commodity stone)
+=>
+	(sell-commodity stone)
+)
+
+
+;RESIGN********************
+
+(defrule
+        (building-type-count castle < 1)
+        (building-type-count archery-range < 1)
+	(building-type-count barracks < 1)
+	(building-type-count stable < 1)
+	(building-type-count siege-workshop < 1)
+	(military-population <= 10)
+=>
+	(resign)
+	(disable-self)
+)
+
+;CHEATS********************
+
+(defrule
+	(event-detected trigger 1)
+=>
+	(enable-timer 3 300)
+	(disable-self)
+)
+
+(defrule
+	(timer-triggered 3)
+	(or
+	(difficulty == easiest)
+	(difficulty == easy)
+)
+=>
+	(cc-add-resource food 2000)
+	(cc-add-resource wood 2000)
+	(cc-add-resource gold 3000)
+	(cc-add-resource stone 100)
+	(disable-timer 3)
+	(enable-timer 3 900)
+)
+
+(defrule
+	(timer-triggered 3)
+	(difficulty == moderate)
+=>
+	(cc-add-resource food 4000)
+	(cc-add-resource wood 4000)
+	(cc-add-resource gold 6000)
+	(cc-add-resource stone 100)
+	(disable-timer 3)
+	(enable-timer 3 600)
+)
+
+(defrule
+	(timer-triggered 3)
+	(or
+	(difficulty == hard)
+	(difficulty == hardest)
+)
+=>
+	(cc-add-resource food 6000)
+	(cc-add-resource wood 6000)
+	(cc-add-resource gold 9000)
+	(cc-add-resource stone 100)
+	(disable-timer 3)
+	(enable-timer 3 300)
+)
